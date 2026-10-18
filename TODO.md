@@ -1,7 +1,7 @@
 # TODO / Known gaps
 
 Single list of everything pending, deferred or knowingly left out. Updated at the end of each phase.
-Last updated: 2026-10-19 (logo added, style guide in BRAND.md). All planned phases are built.
+Last updated: 2026-10-19 (hosting switched to Azure). All planned phases are built.
 
 ## Needs you (owner actions)
 
@@ -45,15 +45,14 @@ Phases 1–4 (foundation, catalog, cart & checkout, payments) are complete; deta
 - [x] Admin reports: revenue/orders by day or month (IST), top products, discount usage, CSV export
 - [x] Docker: backend, frontend (nginx), Postgres, expiry worker (`docker-compose.yml`). Untested here
 
-### Next: Deployment (planned, free setup — see [DEPLOYMENT.md](DEPLOYMENT.md))
-- [ ] Answer the open questions at the end of DEPLOYMENT.md (Oracle signup OK?, SSH access). Domain: qutncandy.com
-- [ ] Owner setup, all free: GitHub repo, Oracle Cloud Always Free VM, GoDaddy DNS records, Gmail app password,
-      Razorpay test keys, Google authorised origins
+### Next: Deployment on Azure (see [DEPLOYMENT.md](DEPLOYMENT.md))
 - [x] Production files: `docker-compose.prod.yml` (Caddy HTTPS, backups, log rotation), `deploy.sh`, server setup,
       production safety checks in settings
-- [ ] Create the Oracle VM, point DNS, run `./deploy.sh setup` then `./deploy.sh`
+- [ ] Azure: free account, B1s Ubuntu VM in Central India (ports 22/80/443), budget alert, save SSH key
+- [ ] GoDaddy DNS: `A @` → VM IP, `CNAME www` → `@`; Google OAuth origin `https://qutncandy.com`
+- [ ] Run `./deploy.sh setup` then `./deploy.sh`; create admin; seed; go-live checks
+- [ ] Reminder: Azure free services end 12 months after signup (then ~₹700–900/month for the VM)
 - [ ] Rate limiting on login (still open)
-- [ ] Go-live checklist with Razorpay test keys
 
 ### Later (to plan): launch readiness and admin polish
 - [ ] Policy pages, GST invoices, change-password screen, new-order email to store, rate limiting

@@ -9,14 +9,14 @@
 #   ./deploy.sh backups                download the latest backups to ./backups
 #
 # Server details live in deploy/.env.server (not committed):
-#   SERVER=ubuntu@<server-ip>
-#   SSH_KEY=~/.ssh/<private-key-file>
+#   SERVER=azureuser@<server-ip>
+#   SSH_KEY=~/.ssh/qutncandy-key.pem
 set -euo pipefail
 cd "$(dirname "$0")"
 
 CONFIG=deploy/.env.server
 if [ ! -f "$CONFIG" ]; then
-  printf 'SERVER=ubuntu@SERVER_IP\nSSH_KEY=~/.ssh/oracle-qutncandy.key\n' > "$CONFIG"
+  printf 'SERVER=azureuser@SERVER_IP\nSSH_KEY=~/.ssh/qutncandy-key.pem\n' > "$CONFIG"
   echo "Created $CONFIG — fill in the server IP and SSH key path, then run again."; exit 1
 fi
 # shellcheck disable=SC1090

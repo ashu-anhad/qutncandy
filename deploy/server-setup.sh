@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time server preparation (Ubuntu on Oracle Cloud). Run as root via: ./deploy.sh setup
+# One-time server preparation (Ubuntu 24.04 on Azure or any cloud VM). Run as root via: ./deploy.sh setup
 set -euo pipefail
 APP_USER="${SUDO_USER:-ubuntu}"
 
@@ -9,7 +9,7 @@ if ! command -v docker >/dev/null; then
 fi
 usermod -aG docker "$APP_USER"
 
-echo "== Firewall: open 80/443 (Oracle's Ubuntu image rejects them by default)"
+echo "== Firewall: make sure 80/443 are open on the VM itself (Azure's network rules are set in the portal)"
 open_port() {  # proto port
   iptables -C INPUT -p "$1" --dport "$2" -j ACCEPT 2>/dev/null && return
   line=$(iptables -L INPUT --line-numbers | awk '/REJECT/ {print $1; exit}')
