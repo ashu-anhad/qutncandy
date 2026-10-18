@@ -5,11 +5,11 @@ Last updated: 2026-10-19 (hosting switched to Azure). All planned phases are bui
 
 ## Needs you (owner actions)
 
-- [x] Admin account: `admin@qutncandy.com` created (2026-10-19). `ashuanhad@gmail.com` stays a customer account
+- [x] Admin account: `admin@qutncandy.com` created (2026-10-19). the owner's Gmail account stays a customer account
 - [ ] Add Razorpay **test** keys to `backend/.env` (`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`), then restart the backend
 - [ ] Do one real test payment end to end (UPI `success@razorpay`). Phase 4 is only tested with simulated Razorpay so far
 - [ ] Set up the Razorpay webhook (`payment.captured`, `order.paid`) with `RAZORPAY_WEBHOOK_SECRET`. Needs a tunnel locally or a real domain
-- [x] Google sign-in: Client ID set in `backend/.env`, real sign-in done with ashuanhad@gmail.com (2026-10-19)
+- [x] Google sign-in: Client ID set in `backend/.env`, real sign-in done with the owner's Gmail (2026-10-19)
 - [ ] Phone OTP: pick an SMS provider (MSG91 / Twilio / Gupshup; Indian SMS needs DLT template registration)
       so codes are actually texted. Today they're only printed in the backend log
 - [ ] Try the Docker setup (`docker compose up --build`). Written but never run here (Docker isn't installed)
