@@ -1,0 +1,92 @@
+# Production on a single server. Run via ./deploy.sh (it passes backend/.env.production).
+#   docker compose --env-file backend/.env.production -f docker-compose.prod.yml up -d --build
+x-logging: &logging
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+x-app-env: &app-env
+  env_file: ./backend/.env.production
+  environment:
+    DATABASE_URL: postgresql+psycopg://candy:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/cutencandy
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: candy
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: cutencandy
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U candy -d cutencandy"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+    <<: *logging
+
+  backend:
+    build: ./backend
+    <<: [*app-env, *logging]
+    volumes:
+      - media:/app/media
+    depends_on:
+      db: { condition: service_healthy }
+    restart: unless-stopped
+
+  worker:
+    build: ./backend
+    <<: [*app-env, *logging]
+    command: ["sh", "-c", "sleep 30; while true; do python -m app.jobs.expire_orders; sleep 300; done"]
+    depends_on: [backend]
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    depends_on: [backend]
+    restart: unless-stopped
+    <<: *logging
+
+  caddy:
+    image: caddy:2
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [frontend]
+    restart: unless-stopped
+    <<: *logging
+
+  # Nightly database dump + images archive into ./backups on the server; keeps the last 7 days.
+  backup:
+    image: postgres:18
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - media:/media:ro
+    command:
+      - sh
+      - -c
+      - |
+        while true; do
+          stamp=$$(date +%F)
+          pg_dump -h db -U candy -d cutencandy | gzip > /backups/db-$$stamp.sql.gz
+          tar -czf /backups/media-$$stamp.tar.gz -C /media .
+          find /backups -name '*.gz' -mtime +7 -delete
+          sleep 86400
+        done
+    depends_on:
+      db: { condition: service_healthy }
+    restart: unless-stopped
+    <<: *logging
+
+volumes:
+  pgdata:
+  media:
+  caddy_data:
+  caddy_config:

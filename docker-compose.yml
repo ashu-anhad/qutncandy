@@ -1,0 +1,54 @@
+# Full stack: docker compose up --build   ->  http://localhost:8080
+# Secrets and keys come from backend/.env; the values below override what must differ inside Docker.
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: candy
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-candy}
+      POSTGRES_DB: cutencandy
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U candy -d cutencandy"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://candy:${POSTGRES_PASSWORD:-candy}@db:5432/cutencandy
+      SITE_URL: ${SITE_URL:-http://localhost:8080}
+      CORS_ORIGINS: ${SITE_URL:-http://localhost:8080}
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Cancels unpaid orders past their 15-minute hold and returns their stock.
+  worker:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://candy:${POSTGRES_PASSWORD:-candy}@db:5432/cutencandy
+      SITE_URL: ${SITE_URL:-http://localhost:8080}
+    command: ["sh", "-c", "while true; do python -m app.jobs.expire_orders; sleep 300; done"]
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  media:
