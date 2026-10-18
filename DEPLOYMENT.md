@@ -1,6 +1,6 @@
 # Deployment plan
 
-Status: **planned, not implemented** (updated 2026-10-19).
+Status: **in progress** — production files ready (`docker-compose.prod.yml`, `deploy/`, `deploy.sh`); server not yet created (2026-10-19).
 Constraint: **trial project, ₹0 running cost.** The only paid item is the domain: **qutncandy.com**
 (and qutncandy.in), already owned at GoDaddy. In the steps below, `<domain>` = `qutncandy.com`.
 
@@ -28,7 +28,7 @@ Customers ──HTTPS──▶ <domain> / www.<domain>   (DNS stays at GoDaddy: 
 | HTTPS | Caddy + Let's Encrypt | Automatic issue and renewal |
 | Database | Postgres in Docker on the same VM | Backups are our job (nightly dump, see below) |
 | Images | Docker volume on the VM | Included in the nightly backup |
-| Code hosting | GitHub private repo | Server pulls from it on deploy |
+| Code delivery | `./deploy.sh` copies the project over SSH (rsync) | No GitHub needed; git on the Mac keeps versions for rollback |
 | Email | Gmail SMTP + app password | ~500/day; sender shows as your Gmail. Fine for a trial |
 | Payments | Razorpay **test mode** | No KYC; live mode later needs KYC + policy pages |
 | Google login | Existing OAuth client | Add `https://<domain>` and `https://www.<domain>` as authorised origins |

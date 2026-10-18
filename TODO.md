@@ -20,7 +20,7 @@ Last updated: 2026-10-19 (logo added, style guide in BRAND.md). All planned phas
 - [x] Logo received; header, login, footer, home hero, favicon and app icon use it (2026-10-19)
 - [ ] Optional: get the logo as a vector (SVG) and a light/reversed version for dark backgrounds. Current assets
       are cut from the 1254 px PNG (sharp at all sizes used on the site)
-- [ ] Turn the project into a git repository (`git init`). There is no version control yet
+- [x] Git repository created; first commit `cdca472` (2026-10-19). Optional: push to a private GitHub repo as an off-site copy
 
 ## Phases (all built)
 
@@ -49,8 +49,10 @@ Phases 1–4 (foundation, catalog, cart & checkout, payments) are complete; deta
 - [ ] Answer the open questions at the end of DEPLOYMENT.md (Oracle signup OK?, SSH access). Domain: qutncandy.com
 - [ ] Owner setup, all free: GitHub repo, Oracle Cloud Always Free VM, GoDaddy DNS records, Gmail app password,
       Razorpay test keys, Google authorised origins
-- [ ] Code + server work: git, prod compose with Caddy, prod settings, deploy/rollback script, nightly backups,
-      rate limiting, admin password change
+- [x] Production files: `docker-compose.prod.yml` (Caddy HTTPS, backups, log rotation), `deploy.sh`, server setup,
+      production safety checks in settings
+- [ ] Create the Oracle VM, point DNS, run `./deploy.sh setup` then `./deploy.sh`
+- [ ] Rate limiting on login (still open)
 - [ ] Go-live checklist with Razorpay test keys
 
 ### Later (to plan): launch readiness and admin polish
