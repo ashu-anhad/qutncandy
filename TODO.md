@@ -83,7 +83,7 @@ Phases 1–4 (foundation, catalog, cart & checkout, payments) are complete; deta
 - [ ] Google tokens are checked via Google's tokeninfo endpoint (one network call per Google login). Fine at small scale;
       switch to local JWT verification (`google-auth`) if login volume grows
 - [ ] Docker runs migrations on backend start; with several backend replicas, run them as a separate one-off step
-- [ ] No frontend tests (backend has 84 pytest tests)
+- [ ] No frontend tests (backend has 92 pytest tests, incl. migrations run on a fresh database)
 
 ### Hardcoded values that could move to the database / admin
 - [ ] Colour swatch hex codes (`frontend/src/lib/format.js` → `COLOUR_HEX`); unknown colours show grey
